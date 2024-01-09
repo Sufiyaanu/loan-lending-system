@@ -1,0 +1,21 @@
+<div class="container">
+  <h2 class="text-center mt-5">Loan Types List</h2>
+  <div class="table-responsive">
+    <table class="table table-striped custom-table">
+      <thead class="thead-custom">
+        <tr>
+          <th class="header-cell">Serial No.</th>
+          <th class="header-cell">Loan Type</th>
+          <th class="header-cell">Interest Rate (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let type of loanTypes; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ type.name }}</td>
+          <td>{{ type.interestRate | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

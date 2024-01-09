@@ -1,0 +1,192 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form mt-5 mb-4">
+        <form #loanForm="ngForm" novalidate>
+          <!-- Section 1: User Details -->
+          <div class="section">
+            <h3>User Details</h3>
+            <div class="form-group">
+              <label for="fullName">Full Name<span class="required-field">*</span></label>
+              <input type="text" name="fullName" id="fullName" [(ngModel)]="loanDetails.fullName"
+                (blur)="cursorFocus('fullName')" placeholder="Enter your name..." required #fullName="ngModel"
+                pattern="^[a-zA-Z.]+(?: [a-zA-Z]+)*$" [readonly]="isReadOnly" />
+              <div>
+                <small *ngIf="fullName.invalid &&  fullName.touched" class="error-message">Please
+                  Enter a valid full name without special characters & numbers.</small>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="dob">Date of Birth<span class="required-field">*</span></label>
+              <input type="text" name="dob" id="dob" [(ngModel)]="loanDetails.dob" required placeholder="dd-mm-yyyy"
+                (blur)="cursorFocus('dob')" pattern="^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(19|20)\d{2}$"
+                #dob="ngModel" [readonly]="isReadOnly" />
+              <div>
+                <small *ngIf="dob.invalid && dob.touched" class="error-message">Please enter a valid date in the format
+                  dd-mm-yyyy.</small>
+                <small *ngIf="dob.valid && dob.touched && !isDOBValid()" class="error-message">
+                  Date of Birth cannot be in the future.
+                </small>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="comments">Comments</label>
+              <textarea name="comments" id="comments" [(ngModel)]="loanDetails.comments" rows="5"
+                [readonly]="isReadOnly" placeholder="Write your views..."></textarea>
+            </div>
+            <div class="form-group">
+              <label for="mobileNumber">Mobile Number<span class="required-field">*</span></label>
+              <input type="text" name="mobileNumber" placeholder="Enter your mobile number" id="mobileNumber"
+                [(ngModel)]="loanDetails.mobileNumber" required (blur)="cursorFocus('mobileNumber')"
+                #mobileNumber="ngModel" maxlength="10" pattern="^\d{10}$" [readonly]="isReadOnly">
+              <div>
+                <small *ngIf="mobileNumber.invalid && mobileNumber.touched" class="error-message">Please enter a valid
+                  10-digit mobile number.</small>
+              </div>
+            </div>
+          </div>
+          <!-- Section 2: Loan Type -->
+          <div class="section">
+            <h3>Loan Type</h3>
+            <div class="form-group">
+              <label for="loanType">Select Loan Type <span class="required-field">*</span></label>
+              <select name="loanType" id="loanType" [(ngModel)]="loanDetails.loanTypes"
+                (change)="updateRateOfInterest()" required #loanType="ngModel" class="loanType"
+                (blur)="cursorFocus('loanType')" [disabled]="isReadOnly" tabindex="0">
+                <option value="">Select loan type</option>
+                <option *ngFor="let type of loanTypes" [value]="type.name" tabindex="0">{{ type.name }}</option>
+              </select>
+            </div>
+            <div>
+              <small *ngIf="loanType.invalid && loanType.touched" class="error-message"> Please select a loan
+                type.</small>
+            </div>
+          </div>
+          <!-- Section 3: Loan Details -->
+          <div class="section">
+            <h3>Loan Details</h3>
+            <div class="form-group">
+              <label for="principalAmount">Principal Amount (P)<span class="required-field">*</span></label>
+              <input type="number" name="principalAmount" id="principalAmount" [(ngModel)]="loanDetails.principalAmount"
+                (blur)="cursorFocus('principalAmount')" #principalAmount="ngModel" required min="0" step="0.01"
+                [readonly]="isReadOnly" />
+              <div>
+                <small *ngIf="principalAmount.invalid && principalAmount.touched" class="error-message">Please enter a
+                  valid positive number</small>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="rateOfInterest">Rate of Interest (R)<span class="required-field">*</span></label>
+              <input type="number" name="rateOfInterest" id="rateOfInterest" [(ngModel)]="loanDetails.rateOfInterest"
+                (blur)="cursorFocus('rateOfInterest')" #rateOfInterest="ngModel" required min="0" step="0.01"
+                readonly />
+              <div>
+                <small *ngIf="rateOfInterest.invalid && rateOfInterest.touched" class="error-message">Please enter a
+                  valid positive number</small>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="timeInMonths">Time in months (T)<span class="required-field">*</span></label>
+              <input type="number" name="timeInMonths" id="timeInMonths" [(ngModel)]="loanDetails.timeInMonths" required
+                (blur)="cursorFocus('timeInMonths')" #timeInMonths="ngModel" min="1" [readonly]="isReadOnly" />
+              <div>
+                <small *ngIf="timeInMonths.invalid && timeInMonths.touched" class="error-message">Please enter a valid
+                  positive number</small>
+              </div>
+            </div>
+            <!-- Readonly fields for SI and A -->
+            <div class="form-group">
+              <label for="simpleInterest">Simple Interest (SI)</label>
+              <input type="number" name="simpleInterest" id="simpleInterest" [ngModel]="loanDetails?.simpleInterest"
+                readonly required />
+            </div>
+            <div class="form-group">
+              <label for="totalAmount">Total Amount (A)</label>
+              <input type="number" name="totalAmount" id="totalAmount" [ngModel]="loanDetails?.totalAmount" readonly
+                required />
+            </div>
+            <!-- Calculate, Save, and Cancel Buttons -->
+            <div class="form-group" *ngIf="!isReadOnly">
+              <button type="button" class="btn  btn-success" (click)="calculate()">Calculate</button>
+              <button type="button" class="btn  btn-success" (click)="cancel()" [disabled]="isReadOnly"
+                *ngIf="action != 'edit'">Cancel</button>
+              <button type="submit" class="btn  btn-success" value="Save" *ngIf="action != 'edit'"
+                data-bs-toggle="modal" [disabled]="isReadOnly || !loanForm.form.valid"
+                data-bs-target="#previewModal">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Action buttons-->
+<div class="d-flex justify-content-end buttons-container mb-3" *ngIf="action=='detail'">
+  <button type="button" class="btn btn-secondary ml-2" (click)="goBack()">Back</button>
+  <button type="button" class="btn btn-danger delete-button" data-bs-toggle="modal"
+    data-bs-target="#confirmDeleteModal">Delete</button>
+</div>
+<div class="d-flex justify-content-end buttons-container mb-3" *ngIf="action=='edit'">
+  <button type="button" class="btn btn-secondary ml-2" (click)="goBack()">Back</button>
+  <button type="button" class="btn btn-danger delete-button" (click)="updateLoan(loanDetails.id)">Update</button>
+</div>
+
+<!--Preview Modal-->
+<div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel">User Detail</h4>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="previewFullName"> Full Name: <span id="previewFullName">{{ loanDetails.fullName }}</span></label>
+        </div>
+        <div class="form-group">
+          <label for="previewDob">DOB: <span id="previewDob">{{ loanDetails.dob }}</span></label>
+        </div>
+        <div class="form-group">
+          <label for="previewComments">Comments: <span id="previewComments">{{ loanDetails.comments }}</span></label>
+        </div>
+        <div class="form-group">
+          <label for="previewMobileNumber">Mobile Number: <span id="previewMobileNumber">{{ loanDetails.mobileNumber
+              }}</span></label>
+        </div>
+        <div class="form-group">
+          <label for="previewLoanTypes">Loan Types: <span id="previewLoanTypes">{{ loanDetails.loanTypes
+              }}</span></label>
+        </div>
+        <div class="form-group">
+          <label for="previewPrincipalAmount">Principal Amount: <span id="previewPrincipalAmount">{{
+              loanDetails.principalAmount }}</span></label>
+        </div>
+        <div class="form-group">
+          <label for="previewRateOfInterest">Rate of Interest: <span id="previewRateOfInterest">{{
+              loanDetails.rateOfInterest }}</span></label>
+        </div>
+        <div class="form-group">
+          <label for="previewTimeInMonths">Months: <span id="previewTimeInMonths">{{ loanDetails.timeInMonths
+              }}</span></label>
+        </div>
+        <div class="form-group">
+          <label for="previewSimpleInterest">Simple Interest: <span id="previewSimpleInterest">{{
+              loanDetails.simpleInterest }}</span></label>
+        </div>
+        <div class="form-group">
+          <label for="previewTotalAmount">Total Amount: <span id="previewTotalAmount">{{ loanDetails.totalAmount
+              }}</span></label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" (click)="onSave(loanForm)" data-bs-dismiss="modal"
+          data-bs-target="#previewModal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+<app-modals></app-modals>

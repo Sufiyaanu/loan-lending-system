@@ -1,0 +1,41 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead class="thead-custom">
+            <tr>
+              <th class="header-cell">Full Name
+                <button class="sort-button small" (click)="sortByFullName()">
+                  <i class="fa" [ngClass]="{'fa-sort-asc': isAscendingSort, 'fa-sort-desc': !isAscendingSort}"></i>
+                </button>
+              </th>
+              <th class="header-cell">DOB</th>
+              <th class="header-cell">Mobile</th>
+              <th class="header-cell">Loan</th>
+              <th class="header-cell">Calculation</th>
+              <th class="header-cell">Simple Interest</th>
+              <th class="header-cell">Total Amount</th>
+              <th class="header-cell">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let userLoan of userLoans">
+              <td class="table-text text-primary">{{ userLoan.fullName }}</td>
+              <td class="table-text">{{ userLoan.dob | dateFormat }}</td>
+              <td class="table-text">{{ userLoan.mobileNumber }}</td>
+              <td class="table-text">{{ userLoan.loanTypes | formatText  }}</td>
+              <td class="table-text">{{ userLoan.calculation}}</td>
+              <td class="table-text">{{ userLoan.simpleInterest }}</td>
+              <td class="table-text">{{ userLoan.totalAmount | currency:'INR':true:'2.2-2' }}</td>
+              <td class="table-text">
+                <button class="btn btn-info btn-sm action-button" (click)="goToDetailView(userLoan)" >Detail View</button>
+                <button class="btn btn-primary btn-sm action-button" (click)="goToEditView(userLoan)">Edit</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

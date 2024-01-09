@@ -1,0 +1,40 @@
+<header class="top-header navbar navbar-expand-lg navbar-light  sticky-navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand">
+      <img [src]="logo" alt="Logo" width="50" height="50">
+    </a>
+    <div class="app-name fs-50 ">
+      {{ title }}
+    </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+      aria-controls="offcanvasRight">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menuCollapse">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" routerLink="/loan-types" routerLinkActive="active">Loan Types</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/lend-loan" routerLinkActive="active">Loan Form</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="/user-loan-details" routerLinkActive="active">User Loan Details</a></li>
+      </ul>
+    </div>
+    <div class="offcanvas offcanvas-end collapse" tabindex="-1" id="offcanvasRight"
+      aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header">
+        <a class="navbar-brand">
+          <img [src]="logo" alt="Logo" width="50" height="50">
+        </a>
+        <div class="app-name h4">
+          {{ title }}
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a class="nav-link" routerLink="/loan-types" routerLinkActive="active"  data-bs-dismiss="offcanvas">Loan Types</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/lend-loan" routerLinkActive="active"  data-bs-dismiss="offcanvas">Loan Form</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/user-loan-details" routerLinkActive="active"  data-bs-dismiss="offcanvas">User Loan Details</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
